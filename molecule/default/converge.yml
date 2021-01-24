@@ -2,6 +2,9 @@
 - name: Converge
   hosts: all
   tasks:
+    - name: "Include role to prepare the server"
+      include_role:
+        name: "raw_server"
     - name: "Include ansible_role_docker_server"
       include_role:
         name: "ansible_role_docker_server"
