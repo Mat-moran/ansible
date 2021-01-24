@@ -1,7 +1,0 @@
----
-
-- hosts: docker
-  gather_facts: no
-  become: yes
-  roles:
-  - { role: docker_upgrade_image }
