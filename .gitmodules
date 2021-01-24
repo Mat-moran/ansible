@@ -31,3 +31,6 @@
 [submodule "roles/docker_drawio"]
 	path = roles/docker_drawio
 	url = https://github.com/lefilament/ansible_role_drawio_docker
+[submodule "roles/ansible_role_docker_server"]
+	path = roles/ansible_role_docker_server
+	url = git@github.com:Mat-moran/ansible_role_docker_server.git
