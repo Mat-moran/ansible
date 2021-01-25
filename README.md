@@ -6,8 +6,7 @@
 
 ## Contributors
 
-* Remi Cazenave <remi-filament>
-
+- Remi Cazenave <remi-filament>
 
 ## Maintainer
 
@@ -15,3 +14,11 @@
 
 This module is maintained by Le Filament
 
+This is a modified version by:
+
+- Amadeo Moran Guerrero
+
+Implementations:
+
+- Testing with molecule
+- git-aggregator to manage modules
