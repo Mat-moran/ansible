@@ -6,6 +6,10 @@ driver:
 platforms:
   - name: Ubuntu
     image: ubuntu:20.04
+    groups:
+      - docker_nagios
+      - docker_auth
+      - docker_odoo
 provisioner:
   name: ansible
 verifier:
