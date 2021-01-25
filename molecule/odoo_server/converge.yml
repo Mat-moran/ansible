@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  vars_files: [../../host_vars/Template_Odoo, ../../group_vars/odoo_server]
+  roles:
+    - role: roles/raw_server
+    - role: roles/odoo_server
