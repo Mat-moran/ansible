@@ -34,3 +34,6 @@
 [submodule "roles/ansible_role_docker_server"]
 	path = roles/ansible_role_docker_server
 	url = git@github.com:Mat-moran/ansible_role_docker_server.git
+[submodule "roles/ansible-role-postgresql"]
+	path = roles/ansible-role-postgresql
+	url = https://github.com/geerlingguy/ansible-role-postgresql.git
