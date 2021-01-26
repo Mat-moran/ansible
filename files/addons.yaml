@@ -1,0 +1,127 @@
+---
+# Localizacion espanola
+l10n-spain:
+  - l10n_es #  Overrides built-in l10n_es under odoo/addons
+  - l10n_es_aeat
+  - l10n_es_account_asset
+  - l10n_es_account_bank_statement_import_n43
+  - l10n_es_aeat_mod111
+  - l10n_es_aeat_mod303
+  - l10n_es_dua
+  - l10n_es_mis_report
+  - l10n_es_partner
+  - l10n_es_pos
+  - l10n_es_toponyms
+  - l10n_es_vat_book
+  - l10_es_aeat_sii
+  - l10_es_aeat_dua_sii
+  - payment_redsys
+
+# Contabilidad y pagos
+account-invoicing:
+  - account_global_discount
+account-financial-tools:
+  - account_asset_management
+  - account_fiscal_year
+  - account_menu
+
+account-financial-reporting:
+  - account_financial_report
+  - account_tax_balance
+
+account-payment:
+  - account_payment_mode
+
+account-invoice-reporting:
+  - account_invoice_report_grouped_by_picking
+
+bank-payment:
+  - account_banking_mandate
+  - account_banking_pain_base
+  - account_banking_sepa_credit_transfer
+  - account_banking_sepa_direct_debit
+  - account_payment_order
+  - account_payment_partner
+  - account_payment_purchase
+  - account_payment_purchase_stock
+  - account_payment_sale
+  - account_payment_mode
+
+community-data-files:
+  - base_bank_from_iban
+
+credit-control:
+  - account_financial_risk
+  - sale_financial_risk
+
+# OTROS SIN CLASIFICAR DE MOMENTO
+partner-contact:
+  - base_location
+  - base_location_geonames_import
+
+report-print-send:
+  - base_report_to_printer
+
+brand:
+  - brand
+
+server-ux:
+  - date_range
+  - mass_editing
+  - mass_operation_abstract
+
+currency:
+  - currency_rate_update
+
+mis-builder:
+  - mis_builder
+
+product-attribute:
+  - product_brand
+  - product_cost_security
+  - product_code_unique
+  - product_multi_category
+  - product_pricelist_direct_print
+  - product_sequence # Este me gustaria adaptarlo, con esto: https://github.com/OCA/product-attribute/issues/627 (lo comentamos cuando puedas)
+
+product-variant:
+  - product_variant_default_code
+
+reporting-engine:
+  - report_xlsx
+
+sale-workflow:
+  - sale_discount_display_amount
+
+stock-logistics-warehouse:
+  - stock_move_location
+
+stock-logistics-workflow:
+  - stock_picking_invoice_link
+
+stock-logistics-reporting:
+  - stock_picking_report_valued
+
+---
+# Enable demo ribbon only for devel and test environments
+ONLY:
+  PGDATABASE: # This environment variable must exist and be in the list
+    - devel
+    - test
+web:
+  - web_environment_ribbon
+
+---
+# Custon repositories
+ENV:
+  DEFAULT_REPO_PATTERN: git@gitlab.com:dmodoo-modules/{}.git
+  ODOO_VERSION: 13.0
+documents-branding:
+  - custom_report
+security:
+  - custom_amg
+partner-contact:
+  - partner_externals_limitation
+sale-workflow:
+  - pricelist_partner_oriented
+  - sale_order_price_widget
