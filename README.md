@@ -22,3 +22,6 @@ Implementations:
 
 - Testing with molecule
 - git-aggregator to manage modules
+- folder structure similar to doodba to be able to share repos.yaml and addons.yaml
+
+NOTE: In order to be able to use the odoo_server role a symbolik link should be done in the repos.yaml file.
