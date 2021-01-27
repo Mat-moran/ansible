@@ -40,3 +40,6 @@
 [submodule "roles/ansible-role-certbot"]
 	path = roles/ansible-role-certbot
 	url = https://github.com/geerlingguy/ansible-role-certbot.git
+[submodule "roles/ansible-role-duplicity"]
+	path = roles/ansible-role-duplicity
+	url = git@github.com:Mat-moran/ansible-role-duplicity.git
