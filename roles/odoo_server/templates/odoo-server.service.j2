@@ -9,7 +9,7 @@ PermissionsStartOnly=true
 SyslogIdentifier={{ odoo_config_name }}
 User={{ odoo_user }}
 Group={{ odoo_user }}
-ExecStart={{ odoo_home }}/{{ odoo_bin_name }} --config=/etc/{{ odoo_config_name }}.conf
+ExecStart={{ odoo_aggregation_folder }}/src/odoo/{{ odoo_bin_name }} --config=/etc/{{ odoo_config_name }}.conf
 WorkingDirectory=/opt/odoo/
 StandardOutput=journal+console
 

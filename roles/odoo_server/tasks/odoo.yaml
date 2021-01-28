@@ -1,0 +1,154 @@
+---
+#--------------------------------------------------
+# Install ODOO
+#--------------------------------------------------
+
+- name: Install WTForms, pysftp, suds and pyopenssl | Odoo version <= 12.0
+  pip:
+    name: ["WTForms", "pysftp", "suds", "pyopenssl", "git-aggregator"]
+  when: odoo_version in ["10.0", "12.0"]
+
+- name: Install pysftp, pyopenssl and git-aggregator | Odoo Version > 12.0
+  pip:
+    name: ["pysftp", "pyopenssl", "git-aggregator"]
+  when: odoo_version in ["13.0", "14.0"]
+
+- name: Prepare system to use git-aggregator to download Odoo
+  block:
+    - name: Create custom module directory (for git-aggregation)
+      file:
+        state: directory
+        name: "{{ odoo_aggregation_folder }}"
+
+    - name: Create auto module directory (for symbolik links)
+      file:
+        state: directory
+        name: "{{ odoo_addonsLinks_folder }}"
+
+    - name: Copy repos.yaml to the server
+      copy:
+        src: repos.yaml
+        force: yes
+        dest: "{{ odoo_aggregation_folder }}/repos.yaml"
+
+    - name: Copy template aggregation.env.j2 to the server
+      template:
+        src: aggregation_defaults.env.j2
+        dest: "{{ odoo_aggregation_folder }}/aggregation_default.env"
+
+    - name: Ejecutar git-aggregator para descargar Odoo
+      shell: "gitaggregate -c repos.yaml --expand-env --env-file aggregation_default.env"
+      args:
+        chdir: "{{ odoo_aggregation_folder }}"
+
+- name: Setting permissions on home folder
+  file:
+    state: directory
+    name: "{{ odoo_home }}"
+    recurse: "yes"
+    owner: "{{ odoo_user }}"
+    group: "{{ odoo_user }}"
+
+#--------------------------------------------------
+# Install Dependencies
+#--------------------------------------------------
+- name: INSTALL requirements.txt
+  block:
+    - name: Install tool packages from odoo/doc
+      pip:
+        requirements: "{{ odoo_aggregation_folder }}/odoo/doc/requirements.txt"
+
+    - name: Install tool packages from odoo
+      pip:
+        requirements: "{{ odoo_aggregation_folder }}/odoo/requirements.txt"
+
+#--------------------------------------------------
+# Configure ODOO
+#--------------------------------------------------
+- name: Odoo config file
+  template:
+    src: odoo-server.conf.j2
+    dest: "/etc/{{ odoo_config_name }}.conf"
+    owner: "{{ odoo_user }}"
+    group: "{{ odoo_user }}"
+    mode: 0640
+  notify: restart-odoo
+
+#--------------------------------------------------
+# Configure ODOO custom modules
+#--------------------------------------------------
+- name: Copy addons.yaml to the server
+  copy:
+    src: addons.yaml
+    force: yes
+    dest: "{{ odoo_aggregation_folder }}/addons.yaml"
+
+- name: Copy autoaggregation.py to the server
+  copy:
+    src: autoaggregate.py
+    force: yes
+    dest: "{{ odoo_aggregation_folder }}/autoaggregate.py"
+
+- name: Preparing repos.yaml with autoaggregation.py
+  shell: python3 autoaggregate.py
+  args:
+    chdir: "{{ odoo_aggregation_folder }}"
+  when: deploy_name is undefined and deploy_pass is undefined
+
+- name: Preparing repos.yaml with autoaggregation.py [deploy tokens added]
+  shell: python3 autoaggregate.py "{{ deploy_name }}" "{{ deploy_pass }}"
+  args:
+    chdir: "{{ odoo_aggregation_folder }}"
+  when: deploy_name is defined and deploy_pass is defined
+
+- name: Ejecutar git-aggregator
+  shell: "gitaggregate -c repos.yaml --expand-env --env-file aggregation_default.env"
+  args:
+    chdir: "{{ odoo_aggregation_folder }}"
+
+- name: CREATE SYMBOLIK LINKS TO ADDONS
+  block:
+    - name: Copy python script
+      copy:
+        src: createLinks.py
+        dest: "{{ odoo_aggregation_folder }}"
+
+    - name: Execute the symbolik link script
+      shell: "python3 createLinks.py"
+      args:
+        chdir: "{{ odoo_aggregation_folder }}"
+      register: outputLinksCreation
+
+    - debug:
+        var: outputLinksCreation
+
+- name: Setting permissions on home folder
+  file:
+    state: directory
+    name: "{{ odoo_home }}/custom/src/addons"
+    recurse: "yes"
+    owner: "{{ odoo_user }}"
+    group: "{{ odoo_user }}"
+
+  notify: restart-odoo
+  tags: custom,oca,ofx,lf
+
+#--------------------------------------------------
+# Adding ODOO as a deamon
+#--------------------------------------------------
+- name: Create Odoo daemon service
+  template:
+    src: odoo-server.service.j2
+    dest: "/lib/systemd/system/{{ odoo_config_name }}.service"
+    mode: 0644
+    owner: root
+  notify: restart-odoo
+
+- name: Systemd daemon reload
+  systemd:
+    daemon-reload: yes
+
+- name: Make odoo to start with system
+  service:
+    name: "{{ odoo_config_name }}"
+    enabled: yes

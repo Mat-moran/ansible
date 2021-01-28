@@ -3,6 +3,8 @@ import yaml
 from pprint import pprint
 import re
 
+global repos_dict
+
 if len(argv) > 1:
     tokens = True
     token_name, token_pass = argv[1], argv[2]
@@ -17,7 +19,6 @@ with open(r"repos.yaml") as file:
     a = yaml.load_all(file, Loader=yaml.FullLoader)
     for doc in a:
         print(doc.keys())
-        global repos_dict
         repos_dict = doc
 
 #########  addons #########

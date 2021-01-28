@@ -1,0 +1,41 @@
+---
+#--------------------------------------------------
+# Install LETSENCRYPT
+#--------------------------------------------------
+
+- name: update apt repository with certbot one
+  apt_repository:
+    repo: "ppa:certbot/certbot"
+  tags: certificate,proxy
+
+- name: install certbot for nginx
+  apt:
+    name: python3-certbot-nginx
+    update_cache: yes
+    force: yes
+    install_recommends: no
+  tags: certificate,proxy
+
+- name: install certificate
+  shell: "certbot --nginx -n --domains {{ odoo_url }} --agree-tos -m {{ maintenance_email }}"
+  tags: certificate,proxy
+  when: www_site is not defined and odoo_url2 is not defined
+
+- name: install certificate
+  shell: "certbot --nginx -n --domains {{ odoo_url }} --domains www.{{ odoo_url }} --agree-tos -m {{ maintenance_email }}"
+  tags: certificate,proxy
+  when: www_site is defined and odoo_url2 is not defined
+
+- name: install certificate
+  shell: "certbot --nginx -n --domains {{ odoo_url }} --domains {{ odoo_url2 }} --agree-tos -m {{ maintenance_email }}"
+  tags: certificate,proxy
+  when: odoo_url2 is defined
+
+- name: add cron job to renew certificate every monday
+  cron:
+    name: renew certificate
+    minute: "30"
+    hour: "2"
+    weekday: "1"
+    job: certbot renew --nginx >> /var/log/le-renew.log
+  tags: certificate,proxy

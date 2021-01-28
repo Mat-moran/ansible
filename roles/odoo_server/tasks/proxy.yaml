@@ -1,0 +1,41 @@
+---
+#--------------------------------------------------
+# Install NGINX
+#--------------------------------------------------
+# TODO role de nginx
+- name: Install Nginx Server
+  apt:
+    name: "nginx"
+    install_recommends: no
+  tags: proxy
+
+- name: Nginx started
+  service:
+    name: "nginx"
+    state: started
+  tags: proxy
+
+#--------------------------------------------------
+# NGINX Configuration
+#--------------------------------------------------
+- name: Configure Nginx
+  template:
+    src: odoo.j2
+    dest: "/etc/nginx/sites-available/odoo"
+  notify: restart nginx
+  tags: proxy
+
+- name: "Enable nginx configuration"
+  file:
+    src: "/etc/nginx/sites-available/odoo"
+    dest: "/etc/nginx/sites-enabled/odoo"
+    state: link
+  notify: restart nginx
+  tags: proxy
+
+- name: Remove default Nginx configuration
+  file:
+    path: "/etc/nginx/sites-enabled/default"
+    state: absent
+  notify: restart nginx
+  tags: proxy

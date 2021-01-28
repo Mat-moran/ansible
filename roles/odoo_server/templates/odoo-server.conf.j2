@@ -1,13 +1,16 @@
 [options]
 unaccent = True
+addons_path={{ odoo_aggregation_folder }}/odoo/addons,{{ odoo_aggregation_folder }}/odoo/odoo/addons,{{ odoo_addonsLinks_folder }}
 admin_passwd = {{ odoo_master_pass }}
 db_host = False
 db_port = False
-db_user = odoo
-{% if odoo_db is defined %}
-dbfilter = {{ odoo_db }}
+db_user = {{ db_user }}
+{% if db_filter is defined %}
+dbfilter = {{ db_filter }}
 {% endif %}
-addons_path={{ odoo_home }}/addons,{{ odoo_home }}/custom/addons
+{% if list_db is defined %}
+list_db = {{ list_db }}
+{% endif %}
 logfile = /var/log/odoo/{{ odoo_config_name }}.log
 xmlrpc_port = 8069
 max_cron_threads = 1

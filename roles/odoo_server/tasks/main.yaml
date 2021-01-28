@@ -1,0 +1,38 @@
+---
+# system settings
+- name: Install system settings
+  include_tasks: sys_settings.yaml
+
+# Banks 
+- name: Bank conection
+  include_tasks: banks.yaml
+  when: banking is defined
+  tags: bank
+
+# Install & Configure Odoo
+- name: Install Odoo
+  include_tasks: odoo.yaml
+
+# TODO anadir esto al role de postgresql
+#--------------------------------------------------
+# Configure PostgreSQL Server
+#--------------------------------------------------
+- name: Creating the ODOO PostgreSQL User
+  postgresql_user: name="{{ odoo_user }}" role_attr_flags="CREATEDB,NOSUPERUSER"
+  become: yes
+  become_user: postgres
+  tags: preinstall
+
+# Install & Configure nginx
+- name: Install Proxy server
+  include_tasks: proxy.yaml
+
+# Install & Configure certbot
+- name: Configure SSL certificates
+  include_role: 
+    name: roles/ansible-role-certbot 
+
+# Install & Configure nginx
+- name: Configure BACKUPS
+  include_role: 
+    name: roles/ansible-role-duplicity 
